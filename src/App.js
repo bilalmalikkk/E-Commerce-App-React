@@ -1,24 +1,37 @@
-import logo from './logo.svg';
+// src/App.js
 import './App.css';
+import { useState } from 'react';
+import { DarkModeProvider } from './context/DarkModeContext';
+import { CartProvider } from './context/CartContext';
+import DarkModeToggle from './components/DarkModeToggle';
+import Cart from './components/Cart';
+import CategoryList from './components/CategoryList';
+import ProductList from './components/ProductList';
 
 function App() {
+  const [selectedCategory, setSelectedCategory] = useState('');
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <DarkModeProvider>
+      <CartProvider>
+        <div className="App">
+          <header className="App-header">
+            <h1>🛒 E-Commerce Store</h1>
+            <DarkModeToggle />
+            <Cart />
+          </header>
+
+          <div className="content">
+            <CategoryList setSelectedCategory={setSelectedCategory} />
+            {selectedCategory ? (
+              <ProductList selectedCategory={selectedCategory} />
+            ) : (
+              <p className="placeholder-text">Select a category to see products!</p>
+            )}
+          </div>
+        </div>
+      </CartProvider>
+    </DarkModeProvider>
   );
 }
 
