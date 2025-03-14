@@ -47,11 +47,12 @@ const Navbar = () => {
             </li>
 
             {/* Dark Mode Toggle Button */}
-<li className="nav-item d-flex align-items-center ms-2">
+<li className="nav-item d-flex align-items-center ms-2 me-2">
   <button
     className={`btn ${darkMode ? "btn-light" : "btn-dark"} fw-semibold`}
     onClick={toggleDarkMode}
     aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"} // Accessibility
+    
   >
     {darkMode ? "☀️" : "🌙"}
   </button>

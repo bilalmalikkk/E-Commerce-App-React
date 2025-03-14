@@ -5,7 +5,6 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import { CartProvider } from "./context/CartContext";
 import { DarkModeProvider, useDarkMode } from "./context/DarkModeContext";
 import Navbar from "./components/Navbar";
-import FilterSection from "./components/FilterSection";
 import FeaturedProducts from "./components/FeaturedProducts";
 import CategoriesSection from "./components/CategoriesSection";
 import CartModal from "./components/CartModal";
