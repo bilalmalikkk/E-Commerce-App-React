@@ -12,11 +12,13 @@ export const CartProvider = ({ children }) => {
     const fetchCart = async () => {
       try {
         const { data } = await axios.get("http://localhost:5000/api/cart");
-        const validatedCart = data.map((item) => ({
-          ...item,
-          price: item.price ?? 0,
-          quantity: item.quantity ?? 1,
-        }));
+        const validatedCart = data
+          .map((item) => ({
+            ...item,
+            price: item.price ?? 0,
+            quantity: item.quantity ?? 1,
+          }))
+          .filter((item) => item.quantity > 0 && item.price > 0); // Filter invalid items
         setCart(validatedCart);
       } catch (err) {
         console.error("Error fetching cart:", err);

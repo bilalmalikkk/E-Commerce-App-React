@@ -1,23 +1,29 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext, useMemo } from "react";
 import { useDarkMode } from "../context/DarkModeContext";
+import { CartContext } from "../context/CartContext";
 
 const CategoriesSection = () => {
   const { darkMode } = useDarkMode();
+  const { addToCart, isInCart } = useContext(CartContext);
   const [categories, setCategories] = useState([]);
   const [categoryImages, setCategoryImages] = useState({});
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+
+  // Desired category order
+  const categoryOrder = useMemo(() => ["men's clothing", "women's clothing", "jewelery", "electronics"], []);
 
   // Fetch categories
   useEffect(() => {
     fetch("https://fakestoreapi.com/products/categories")
       .then((res) => res.json())
       .then((data) => {
-        setCategories(data);
-        fetchFirstProductImages(data);
+        const orderedCategories = categoryOrder.filter((cat) => data.includes(cat));
+        setCategories(orderedCategories);
+        fetchFirstProductImages(orderedCategories);
       })
       .catch((err) => console.error("Failed to fetch categories:", err));
-  }, []);
+  }, [categoryOrder]);
 
   // Fetch first product for each category
   const fetchFirstProductImages = async (categories) => {
@@ -49,17 +55,22 @@ const CategoriesSection = () => {
     setProducts([]);
   };
 
+  const handleAddToCart = (product) => {
+    addToCart(product);
+    console.log(`✅ Added ${product.title} to cart!`);
+  };
+
   return (
     <section id="categories" className={`text-center py-4 ${darkMode ? "bg-dark text-light" : "bg-light"}`}>
-      <h2 className="mb-4 fw-bold text-primary">Shop by Category</h2>
-      <div className="row justify-content-center" id="category-container">
+      <h2 className="mb-4 fw-bold text-success">Shop by Category</h2>
+      <div className="d-flex flex-wrap justify-content-center gap-4" id="category-container">
         {!selectedCategory ? (
           categories.map((category, index) => (
-            <div key={index} className="col-md-3 col-sm-6 mb-4">
+            <div key={index} className="d-flex justify-content-center">
               <div
                 className={`card shadow-lg border-0 h-100 ${darkMode ? "bg-secondary text-light" : "bg-white"}`}
                 onClick={() => handleCategoryClick(category)}
-                style={{ cursor: "pointer" }}
+                style={{ cursor: "pointer", width: "18rem" }}
               >
                 {/* Display first product image for the category */}
                 {categoryImages[category] && (
@@ -67,16 +78,14 @@ const CategoriesSection = () => {
                     src={categoryImages[category]}
                     className="card-img-top p-2 rounded"
                     alt={category}
-                    style={{ height: "350px", width: "100%", objectFit: "cover" }}
+                    style={{ height: "300px", objectFit: "cover" }}
                   />
                 )}
                 <div className="card-body d-flex flex-column justify-content-between">
                   <h5 className={`card-title fw-semibold ${darkMode ? "text-light" : "text-dark"}`}>
                     {category.charAt(0).toUpperCase() + category.slice(1)}
                   </h5>
-                  <button className={`btn ${darkMode ? "btn-outline-light" : "btn-outline-primary"} fw-bold`}>
-                    🔍 Browse
-                  </button>
+                  <button className={`btn ${darkMode ? "btn-outline-light" : "btn-outline-primary"} fw-bold`}>🔍 Browse</button>
                 </div>
               </div>
             </div>
@@ -86,18 +95,26 @@ const CategoriesSection = () => {
             <button className="btn btn-secondary mb-3" onClick={handleBack}>
               ⬅️ Back to Categories
             </button>
-            {products.map((product) => (
-              <div key={product.id} className="col-md-4 mb-4">
-                <div className={`card shadow-lg border-0 h-100 ${darkMode ? "bg-secondary text-light" : "bg-white"}`}>
-                  <img src={product.image} className="card-img-top p-2 rounded" alt={product.title} />
-                  <div className="card-body d-flex flex-column justify-content-between">
-                    <h5 className={`card-title fw-semibold ${darkMode ? "text-light" : "text-dark"}`}>{product.title}</h5>
-                    <p className="card-text">Price: Rs {product.price}</p>
-                    <button className={`btn ${darkMode ? "btn-outline-light" : "btn-success"} fw-bold`}>Add to Cart</button>
+            <div className="d-flex flex-wrap justify-content-center gap-4">
+              {products.map((product) => (
+                <div key={product.id} className="d-flex justify-content-center">
+                  <div className={`card shadow-lg border-0 h-100 ${darkMode ? "bg-secondary text-light" : "bg-white"}`} style={{ width: "18rem" }}>
+                    <img src={product.image} className="card-img-top p-2 rounded" alt={product.title} style={{ height: "300px", objectFit: "cover" }} />
+                    <div className="card-body d-flex flex-column justify-content-between">
+                      <h5 className={`card-title fw-semibold ${darkMode ? "text-light" : "text-dark"}`}>{product.title}</h5>
+                      <p className="card-text">Price: Rs {product.price}</p>
+                      <button
+                        className={`btn ${darkMode ? "btn-outline-light" : isInCart(product.id) ? "btn-secondary" : "btn-success"} fw-bold`}
+                        onClick={() => handleAddToCart(product)}
+                        disabled={isInCart(product.id)}
+                      >
+                        {isInCart(product.id) ? "✔️ Added" : "➕ Add to Cart"}
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </>
         )}
       </div>

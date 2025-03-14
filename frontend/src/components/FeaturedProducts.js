@@ -15,6 +15,20 @@ const FeaturedProducts = () => {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [customNames, setCustomNames] = useState(["Men's Classic Tshirt","Women's Polyster Shirt","Metal Bracelet"]);
+
+  // Load custom product names from JSON file
+  useEffect(() => {
+    const fetchProductNames = async () => {
+      try {
+        const response = await axios.get("/customProductNames.json");
+        setCustomNames(response.data);
+      } catch (err) {
+        console.error("Failed to load custom names:", err);
+      }
+    };
+    fetchProductNames();
+  }, []);
 
   // Fetch products from backend API
   const fetchProducts = useCallback(async () => {
@@ -22,10 +36,16 @@ const FeaturedProducts = () => {
     setError(null);
     try {
       const { data } = await axios.get("http://localhost:5000/api/products");
-      setProducts(data);
-      setFilteredProducts(data.slice(0, 6)); // Show only 6 products
+      const specificIndexes = [0, 2, 4];
+      const selectedProducts = specificIndexes.map((index, i) => {
+        const product = data[index];
+        if (product) product.name = customNames[i] || `Product ${index + 1}`;
+        return product;
+      }).filter(Boolean);
 
-      // Extract unique categories from products
+      setProducts(data);
+      setFilteredProducts(selectedProducts);
+
       const uniqueCategories = ["all", ...new Set(data.map((product) => product.category.toLowerCase()))];
       setCategories(uniqueCategories);
     } catch (err) {
@@ -34,24 +54,28 @@ const FeaturedProducts = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [customNames]);
 
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
 
-  // Filter products when category or price changes
   useEffect(() => {
     const filtered = products
       .filter(
         (product) =>
           (category === "all" || product.category.toLowerCase() === category.toLowerCase()) &&
           product.price <= maxPrice
-      )
-      .slice(0, 6); // Limit to 6 products after filtering
+      );
 
-    setFilteredProducts(filtered);
-  }, [category, maxPrice, products]);
+    const specificIndexes = [1, 18, 4];
+    const selectedFiltered = specificIndexes.map((index, i) => {
+      const product = filtered[index];
+      if (product) product.name = customNames[i] || `Product ${index + 1}`;
+      return product;
+    }).filter(Boolean);
+    setFilteredProducts(selectedFiltered);
+  }, [category, maxPrice, products, customNames]);
 
   const handleAddToCart = (product) => {
     addToCart(product);
@@ -100,11 +124,9 @@ const FeaturedProducts = () => {
         </div>
       </section>
 
-      {/* Loading and Error States */}
       {loading && <h5 className="text-info">Loading products...</h5>}
       {error && <h5 className="text-danger">{error}</h5>}
 
-      {/* Product Cards Section */}
       <div className="row justify-content-center gap-3">
         {!loading && !error && filteredProducts.length > 0 ? (
           filteredProducts.map((product) => (
