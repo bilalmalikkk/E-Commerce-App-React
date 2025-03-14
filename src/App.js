@@ -1,38 +1,58 @@
-// src/App.js
-import './App.css';
-import { useState } from 'react';
-import { DarkModeProvider } from './context/DarkModeContext';
-import { CartProvider } from './context/CartContext';
-import DarkModeToggle from './components/DarkModeToggle';
-import Cart from './components/Cart';
-import CategoryList from './components/CategoryList';
-import ProductList from './components/ProductList';
+import React from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js"; // Ensure this is bundled properly
+import "bootstrap-icons/font/bootstrap-icons.css";
+import { CartProvider } from "./context/CartContext";
+import { DarkModeProvider, useDarkMode } from "./context/DarkModeContext";
+import Navbar from "./components/Navbar";
+import FilterSection from "./components/FilterSection";
+import FeaturedProducts from "./components/FeaturedProducts";
+import CategoriesSection from "./components/CategoriesSection";
+import CartModal from "./components/CartModal";
+import ContactSection from "./components/ContactSection";
 
-function App() {
-  const [selectedCategory, setSelectedCategory] = useState('');
+// ✅ Keep this component clean
+const AppContent = () => {
+  const { darkMode } = useDarkMode(); // Get dark mode state
 
   return (
-    <DarkModeProvider>
-      <CartProvider>
-        <div className="App">
-          <header className="App-header">
-            <h1>🛒 E-Commerce Store</h1>
-            <DarkModeToggle />
-            <Cart />
-          </header>
+    <div className={`App ${darkMode ? "dark-mode" : ""}`}>
+      {/* Navbar */}
+      <Navbar />
 
-          <div className="content">
-            <CategoryList setSelectedCategory={setSelectedCategory} />
-            {selectedCategory ? (
-              <ProductList selectedCategory={selectedCategory} />
-            ) : (
-              <p className="placeholder-text">Select a category to see products!</p>
-            )}
-          </div>
-        </div>
-      </CartProvider>
-    </DarkModeProvider>
+      {/* Main Content */}
+      <main className="container">
+      <section
+  id="home"
+  className={`text-center py-4 m-4 ${
+    darkMode ? "bg-dark text-light" : "bg-light"
+  }`}
+>
+  <h2 className={`fw-bold ${darkMode ? "text-warning" : "text-primary"}`}>
+    Welcome to E-Commerce Store
+  </h2>
+</section>
+
+        {/* Sections */}
+        
+        <FeaturedProducts />
+        <CategoriesSection />
+        <ContactSection />
+      </main>
+
+      {/* Ensure CartModal is here to get context */}
+      <CartModal />
+    </div>
   );
-}
+};
 
-export default App;
+// ✅ Ensure this exports properly
+const App = () => (
+  <DarkModeProvider>
+    <CartProvider>
+      <AppContent />
+    </CartProvider>
+  </DarkModeProvider>
+);
+
+export default App; // This line must stay!
