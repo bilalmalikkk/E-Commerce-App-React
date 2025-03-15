@@ -24,14 +24,14 @@ export const DarkModeProvider = ({ children }) => {
 
   return (
     <DarkModeContext.Provider
-    value={{
-      darkMode,
-      setDarkMode,
-      toggleDarkMode: () => setDarkMode((prevMode) => !prevMode),
-    }}
-  >
-    <div className={`App ${darkMode ? "dark-mode" : ""}`}>{children}</div>
-  </DarkModeContext.Provider>
-    
+      value={{
+        darkMode,
+        setDarkMode,
+        toggleDarkMode: () => setDarkMode((prevMode) => !prevMode),
+      }}
+    >
+      <div className={`App ${darkMode ? "dark-mode" : ""}`}>{children}</div>
+    </DarkModeContext.Provider>
+
   );
 };

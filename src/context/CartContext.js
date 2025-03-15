@@ -6,12 +6,21 @@ export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState(
     JSON.parse(localStorage.getItem("cart")) || []
   );
+  const [totalPrice, setTotalPrice] = useState(0);
 
+  // Save cart to local storage on change
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
+
+    // Recalculate total price whenever cart updates
+    const newTotal = cart.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
+    setTotalPrice(newTotal);
   }, [cart]);
 
-  // Add to cart or increase quantity
+  // Add product to cart or increase quantity
   const addToCart = (product) => {
     const existingItem = cart.find((item) => item.id === product.id);
     if (existingItem) {
@@ -26,25 +35,25 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // Decrease quantity or remove if quantity reaches 1
+  // Decrease quantity or remove item if quantity reaches 0
   const decreaseFromCart = (id) => {
     const updatedCart = cart
       .map((item) =>
         item.id === id ? { ...item, quantity: item.quantity - 1 } : item
       )
-      .filter((item) => item.quantity > 0); // Remove if quantity hits 0
+      .filter((item) => item.quantity > 0);
     setCart(updatedCart);
   };
 
-  // Completely remove item from cart
+  // Remove item from cart
   const removeFromCart = (id) => {
     setCart(cart.filter((item) => item.id !== id));
   };
 
-  // Clear the entire cart
+  // Clear the cart
   const clearCart = () => setCart([]);
 
-  // Check if an item is in cart
+  // Check if item is in cart
   const isInCart = (id) => cart.some((item) => item.id === id);
 
   return (
@@ -56,6 +65,7 @@ export const CartProvider = ({ children }) => {
         removeFromCart,
         clearCart,
         isInCart,
+        totalPrice,
       }}
     >
       {children}

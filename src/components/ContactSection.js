@@ -85,7 +85,7 @@ const ContactSection = () => {
             data-bs-placement="top"
             title="Send your message"
           >
-            🚀 Send Message
+            Send Message
           </button>
         </form>
       </div>

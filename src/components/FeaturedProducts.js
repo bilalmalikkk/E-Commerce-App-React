@@ -61,7 +61,7 @@ const FeaturedProducts = () => {
 
   return (
     <section id="fproducts" className={`text-center py-5 ${darkMode ? "bg-dark text-light" : "bg-light"}`}>
-      <h3 className="fw-bold mb-4 text-success">🔥 Featured Products</h3>
+      <h3 className="fw-bold mb-4 text-success">Featured Products</h3>
 
       {/* Filters Section */}
       <section id="filters" className="text-center py-4">

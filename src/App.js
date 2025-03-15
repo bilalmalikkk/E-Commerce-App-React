@@ -10,7 +10,7 @@ import CategoriesSection from "./components/CategoriesSection";
 import CartModal from "./components/CartModal";
 import ContactSection from "./components/ContactSection";
 
-// ✅ Keep this component clean
+
 const AppContent = () => {
   const { darkMode } = useDarkMode(); // Get dark mode state
 
@@ -19,33 +19,31 @@ const AppContent = () => {
       {/* Navbar */}
       <Navbar />
 
-      {/* Main Content */}
+      {/* Main Content  */}
       <main className="container">
-      <section
-  id="home"
-  className={`text-center py-4 m-4 ${
-    darkMode ? "bg-dark text-light" : "bg-light"
-  }`}
->
-  <h2 className={`fw-bold ${darkMode ? "text-warning" : "text-primary"}`}>
-    Welcome to E-Commerce Store
-  </h2>
-</section>
+        <section
+          id="home"
+          className={`text-center py-4 m-4 ${darkMode ? "bg-dark text-light" : "bg-light"
+            }`}
+        >
+          <h2 className={`fw-bold ${darkMode ? "text-warning" : "text-primary"}`}>
+            Welcome to E-Commerce Store
+          </h2>
+        </section>
 
         {/* Sections */}
-        
+
         <FeaturedProducts />
         <CategoriesSection />
         <ContactSection />
       </main>
 
-      {/* Ensure CartModal is here to get context */}
       <CartModal />
     </div>
   );
 };
 
-// ✅ Ensure this exports properly
+
 const App = () => (
   <DarkModeProvider>
     <CartProvider>
@@ -54,4 +52,4 @@ const App = () => (
   </DarkModeProvider>
 );
 
-export default App; // This line must stay!
+export default App; 

@@ -19,7 +19,6 @@ const ProductCard = ({ product, onAddToCart, isInCart }) => {
       />
       <div className="card-body d-flex flex-column justify-content-between flex-grow-1">
         <h5 className="card-title fw-bold">{product.name}</h5>
-        <p className={`card-text ${darkMode ? "text-light" : "text-muted"}`}>{product.description}</p>
         <h6 className={`fw-bold ${darkMode ? "text-warning" : "text-success"}`}>Rs {product.price}</h6>
       </div>
 

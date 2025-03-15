@@ -1,5 +1,5 @@
 import React from "react";
-import { useDarkMode } from "../context/DarkModeContext"; // Dark mode context!
+import { useDarkMode } from "../context/DarkModeContext"; // Dark mode context
 
 const ProductModal = ({ product }) => {
   const { darkMode } = useDarkMode(); // Get dark mode state
@@ -14,14 +14,12 @@ const ProductModal = ({ product }) => {
     >
       <div className="modal-dialog">
         <div
-          className={`modal-content ${
-            darkMode ? "bg-dark text-light" : "bg-white"
-          }`}
+          className={`modal-content ${darkMode ? "bg-dark text-light" : "bg-white"
+            }`}
         >
           <div
-            className={`modal-header ${
-              darkMode ? "bg-secondary text-light" : "bg-light"
-            }`}
+            className={`modal-header ${darkMode ? "bg-secondary text-light" : "bg-light"
+              }`}
           >
             <h5 className="modal-title" id={`productModalLabel-${product.id}`}>
               {product.name}
@@ -41,9 +39,8 @@ const ProductModal = ({ product }) => {
             />
             <p>{product.description}</p>
             <h6
-              className={`fw-bold ${
-                darkMode ? "text-warning" : "text-success"
-              }`}
+              className={`fw-bold ${darkMode ? "text-warning" : "text-success"
+                }`}
             >
               Rs {product.price}
             </h6>
