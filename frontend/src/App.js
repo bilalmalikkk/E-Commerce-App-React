@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js"; // Ensure this is bundled properly
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { CartProvider } from "./context/CartContext";
-import { DarkModeProvider, useDarkMode } from "./context/DarkModeContext";
+import { DarkModeProvider, useDarkMode } from "./context/DarkModeContext"; //using custom hook to read dark mode state
 import Navbar from "./components/Navbar";
 import FeaturedProducts from "./components/FeaturedProducts";
 import CategoriesSection from "./components/CategoriesSection";
@@ -15,6 +15,7 @@ const AppContent = () => {
   const { darkMode } = useDarkMode(); // Get dark mode state
 
   return (
+    // Templete literal to build class name dynamically
     <div className={`App ${darkMode ? "dark-mode" : ""}`}>
       {/* Navbar */}
       <Navbar />
@@ -45,12 +46,13 @@ const AppContent = () => {
 
 
 const App = () => (
-  <DarkModeProvider>
+  //context providers
+  <DarkModeProvider> 
     <CartProvider>
       <AppContent />
     </CartProvider>
   </DarkModeProvider>
 );
 
-export default App; 
+export default App; //default export
 

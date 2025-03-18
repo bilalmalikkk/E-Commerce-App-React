@@ -8,13 +8,14 @@ import CategoryList from "../components/CategoryList";
 import ProductList from "../components/ProductList";
 
 function App() {
-    const [selectedCategory, setSelectedCategory] = useState("");
+    const [selectedCategory, setSelectedCategory] = useState("");  //setted a state variable to handle which products get shown later
 
     return (
-        <DarkModeProvider>
+        //Wraps everything to provide theme state globally.
+        <DarkModeProvider> 
             <CartProvider>
                 <div className="container">
-                    <nav className="navbar navbar-dark bg-dark">
+                    <nav className="navbar navbar-dark bg-dark"> 
                         <DarkModeToggle />
                         <Cart />
                     </nav>
