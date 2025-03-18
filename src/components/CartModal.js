@@ -32,14 +32,14 @@ const CartModal = () => {
         <ModalBody>
           {cart.length > 0 ? (
             <ul className="list-group">
-              {cart.map((item) => (
+              {cart.map((item, index) => (
                 <li
-                  key={item.id}
+                  key={item.id ?? `cart-item-${index}`}
                   className="list-group-item d-flex justify-content-between align-items-center"
                 >
                   <div>
                     <strong>{item.name}</strong>
-                    <div>Price: Rs {item.price.toLocaleString()} | Qty: {item.quantity}</div>
+                    <div>Price: Rs {item.price ? item.price.toLocaleString() : "0"} | Qty: {item.quantity}</div>
                   </div>
                   <div>
                     <Button
@@ -76,7 +76,7 @@ const CartModal = () => {
 
         {/* Footer showing Total Price */}
         <ModalFooter className="d-flex justify-content-between">
-          <h5 className="text-success">Total: Rs {totalPrice.toLocaleString()}</h5>
+          <h5 className="text-success">Total: Rs {totalPrice ? totalPrice.toLocaleString() : "0"}</h5>
           <div>
             <Button color="secondary" onClick={toggle}>
               Close

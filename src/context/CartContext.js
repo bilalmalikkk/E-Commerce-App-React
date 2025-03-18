@@ -1,20 +1,44 @@
 import React, { createContext, useState, useEffect } from "react";
+import axios from "axios";
 
 export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  const [cart, setCart] = useState(
-    JSON.parse(localStorage.getItem("cart")) || []
-  );
+  const [cart, setCart] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
 
-  // Save cart to local storage on change
+  // Fetch cart from backend on load
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
+    const fetchCart = async () => {
+      try {
+        const { data } = await axios.get("http://localhost:5000/api/cart");
+        const validatedCart = data.map((item) => ({
+          ...item,
+          price: item.price ?? 0,
+          quantity: item.quantity ?? 1,
+        }));
+        setCart(validatedCart);
+      } catch (err) {
+        console.error("Error fetching cart:", err);
+        setCart([]);
+      }
+    };
+    fetchCart();
+  }, []);
 
-    // Recalculate total price whenever cart updates
+  // Sync cart with backend and update total price
+  useEffect(() => {
+    const syncCart = async () => {
+      try {
+        await axios.post("http://localhost:5000/api/cart", { cart });
+      } catch (error) {
+        console.error("Error updating cart: ", error);
+      }
+    };
+    syncCart();
+
     const newTotal = cart.reduce(
-      (total, item) => total + item.price * item.quantity,
+      (total, item) => total + (item.price ?? 0) * (item.quantity ?? 1),
       0
     );
     setTotalPrice(newTotal);
@@ -26,12 +50,12 @@ export const CartProvider = ({ children }) => {
     if (existingItem) {
       const updatedCart = cart.map((item) =>
         item.id === product.id
-          ? { ...item, quantity: item.quantity + 1 }
+          ? { ...item, quantity: (item.quantity ?? 0) + 1 }
           : item
       );
       setCart(updatedCart);
     } else {
-      setCart([...cart, { ...product, quantity: 1 }]);
+      setCart([...cart, { ...product, quantity: 1, price: product.price ?? 0 }]);
     }
   };
 
@@ -39,7 +63,7 @@ export const CartProvider = ({ children }) => {
   const decreaseFromCart = (id) => {
     const updatedCart = cart
       .map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity - 1 } : item
+        item.id === id ? { ...item, quantity: Math.max((item.quantity ?? 1) - 1, 0) } : item
       )
       .filter((item) => item.quantity > 0);
     setCart(updatedCart);
