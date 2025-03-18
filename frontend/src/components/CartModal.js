@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { CartContext } from "../context/CartContext";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import CheckoutButton from "./CheckoutButton"; // ✅ Import the CheckoutButton component
 
 const CartModal = () => {
   const {
@@ -10,10 +11,10 @@ const CartModal = () => {
     removeFromCart,
     clearCart,
     totalPrice,
-  } = useContext(CartContext); //setting up cartcontext data
+  } = useContext(CartContext);
 
-  const [modal, setModal] = useState(false); //it tracks whether the cart modal is open (true) or closed (false)
-  const toggle = () => setModal(!modal); //it flips the modal state each time it’s called
+  const [modal, setModal] = useState(false);
+  const toggle = () => setModal(!modal);
 
   return (
     <>
@@ -27,8 +28,8 @@ const CartModal = () => {
       </Button>
 
       {/* Cart Modal */}
-      <Modal key={cart.length} isOpen={modal} toggle={toggle} centered> 
-        <ModalHeader toggle={toggle}>Your Cart</ModalHeader> 
+      <Modal key={cart.length} isOpen={modal} toggle={toggle} centered>
+        <ModalHeader toggle={toggle}>Your Cart</ModalHeader>
         <ModalBody>
           {cart.length > 0 ? (
             <ul className="list-group">
@@ -39,7 +40,9 @@ const CartModal = () => {
                 >
                   <div>
                     <strong>{item.name}</strong>
-                    <div>Price: Rs {item.price ? item.price.toLocaleString() : "0"} | Qty: {item.quantity}</div>
+                    <div>
+                      Price: Rs {item.price ? item.price.toLocaleString() : "0"} | Qty: {item.quantity}
+                    </div>
                   </div>
                   <div>
                     <Button
@@ -76,7 +79,9 @@ const CartModal = () => {
 
         {/* Footer showing Total Price */}
         <ModalFooter className="d-flex justify-content-between">
-          <h5 className="text-success">Total: Rs {totalPrice ? totalPrice.toLocaleString() : "0"}</h5>
+          <h5 className="text-success">
+            Total: Rs {totalPrice ? totalPrice.toLocaleString() : "0"}
+          </h5>
           <div>
             <Button color="secondary" onClick={toggle}>
               Close
@@ -84,6 +89,8 @@ const CartModal = () => {
             <Button color="danger" onClick={clearCart} className="ms-2">
               Clear Cart
             </Button>
+            {/* Checkout Button with cartItems passed in */}
+            <CheckoutButton cartItems={cart} />
           </div>
         </ModalFooter>
       </Modal>

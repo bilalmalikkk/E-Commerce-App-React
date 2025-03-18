@@ -8,7 +8,6 @@ const Navbar = () => {
     <header className={`py-2 ${darkMode ? "bg-dark text-light" : "bg-light text-dark"}`}>
       {/* Navbar container with dynamic dark/light mode styling */}
       <nav className={`container-fluid navbar navbar-expand-lg ${darkMode ? "navbar-dark bg-dark" : "navbar-light bg-light"} fixed-top shadow`}>
-        {/* Brand Logo */}
         <a className="navbar-brand ms-5 fw-bold" href="/Ecommerce.html">
           🛍️ E-Commerce Store
         </a>
@@ -66,4 +65,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar; // Export the Navbar component for use in other parts of the app
+export default Navbar; // Default Export for other components
