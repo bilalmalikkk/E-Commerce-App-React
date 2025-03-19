@@ -10,10 +10,10 @@ const CartModal = () => {
     removeFromCart,
     clearCart,
     totalPrice,
-  } = useContext(CartContext);
+  } = useContext(CartContext); //setting up cartcontext data
 
-  const [modal, setModal] = useState(false);
-  const toggle = () => setModal(!modal);
+  const [modal, setModal] = useState(false); //it tracks whether the cart modal is open (true) or closed (false)
+  const toggle = () => setModal(!modal); //it flips the modal state each time it’s called
 
   return (
     <>
@@ -27,8 +27,8 @@ const CartModal = () => {
       </Button>
 
       {/* Cart Modal */}
-      <Modal key={cart.length} isOpen={modal} toggle={toggle} centered>
-        <ModalHeader toggle={toggle}>Your Cart</ModalHeader>
+      <Modal key={cart.length} isOpen={modal} toggle={toggle} centered> 
+        <ModalHeader toggle={toggle}>Your Cart</ModalHeader> 
         <ModalBody>
           {cart.length > 0 ? (
             <ul className="list-group">
@@ -91,4 +91,4 @@ const CartModal = () => {
   );
 };
 
-export default CartModal;
+export default CartModal; //default export

@@ -3,36 +3,43 @@ import { useDarkMode } from "../context/DarkModeContext";
 import { CartContext } from "../context/CartContext";
 
 const CategoriesSection = () => {
+  // Access dark mode state from context
   const { darkMode } = useDarkMode();
+  // Access cart functions from context
   const { addToCart, isInCart } = useContext(CartContext);
+  
+  // State hooks for categories, images, products, and selected category
   const [categories, setCategories] = useState([]);
   const [categoryImages, setCategoryImages] = useState({});
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
-  // Desired category order
+  // Desired category order, memoized to prevent recalculation on re-renders
   const categoryOrder = useMemo(() => ["men's clothing", "women's clothing", "jewelery", "electronics"], []);
 
-  // Fetch categories
+  // Fetch categories from API on component mount
   useEffect(() => {
     fetch("https://fakestoreapi.com/products/categories")
       .then((res) => res.json())
       .then((data) => {
+        // Filter categories according to the desired order
         const orderedCategories = categoryOrder.filter((cat) => data.includes(cat));
         setCategories(orderedCategories);
+        // Fetch images for each category
         fetchFirstProductImages(orderedCategories);
       })
       .catch((err) => console.error("Failed to fetch categories:", err));
   }, [categoryOrder]);
 
-  // Fetch first product for each category
+  // Fetch the first product image for each category
   const fetchFirstProductImages = async (categories) => {
     const images = {};
     try {
       for (const category of categories) {
         const res = await fetch(`https://fakestoreapi.com/products/category/${category}`);
         const data = await res.json();
-        if (data.length > 0) images[category] = data[2].image; // Store first product image
+        // Store the third product's image (change index if needed)
+        if (data.length > 0) images[category] = data[2].image;
       }
       setCategoryImages(images);
     } catch (err) {
@@ -40,7 +47,7 @@ const CategoriesSection = () => {
     }
   };
 
-  // Handle category click to fetch all products from that category
+  // Handle category card click — fetch products for the selected category
   const handleCategoryClick = (category) => {
     fetch(`https://fakestoreapi.com/products/category/${category}`)
       .then((res) => res.json())
@@ -49,12 +56,13 @@ const CategoriesSection = () => {
     setSelectedCategory(category);
   };
 
-  // Back button handler
+  // Back button handler — reset view to categories
   const handleBack = () => {
     setSelectedCategory(null);
     setProducts([]);
   };
 
+  // Handle adding product to cart
   const handleAddToCart = (product) => {
     addToCart(product);
     console.log(`✅ Added ${product.title} to cart!`);
@@ -64,6 +72,7 @@ const CategoriesSection = () => {
     <section id="categories" className={`text-center py-4 ${darkMode ? "bg-dark text-light" : "bg-light"}`}>
       <h2 className="mb-4 fw-bold text-success">Shop by Category</h2>
       <div className="d-flex flex-wrap justify-content-center gap-4" id="category-container">
+        {/* Show categories if no category is selected */}
         {!selectedCategory ? (
           categories.map((category, index) => (
             <div key={index} className="d-flex justify-content-center">
@@ -72,7 +81,7 @@ const CategoriesSection = () => {
                 onClick={() => handleCategoryClick(category)}
                 style={{ cursor: "pointer", width: "18rem" }}
               >
-                {/* Display first product image for the category */}
+                {/* Display first product image for each category */}
                 {categoryImages[category] && (
                   <img
                     src={categoryImages[category]}
@@ -91,6 +100,7 @@ const CategoriesSection = () => {
             </div>
           ))
         ) : (
+          // Show products of the selected category
           <>
             <button className="btn btn-secondary mb-3" onClick={handleBack}>
               ⬅️ Back to Categories
@@ -103,6 +113,7 @@ const CategoriesSection = () => {
                     <div className="card-body d-flex flex-column justify-content-between">
                       <h5 className={`card-title fw-semibold ${darkMode ? "text-light" : "text-dark"}`}>{product.title}</h5>
                       <p className="card-text">Price: Rs {product.price}</p>
+                      {/* Add to cart button — disabled if product is already in cart */}
                       <button
                         className={`btn ${darkMode ? "btn-outline-light" : isInCart(product.id) ? "btn-secondary" : "btn-success"} fw-bold`}
                         onClick={() => handleAddToCart(product)}

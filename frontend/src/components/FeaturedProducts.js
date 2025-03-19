@@ -6,18 +6,21 @@ import { useDarkMode } from "../context/DarkModeContext";
 import axios from "axios";
 
 const FeaturedProducts = () => {
+  // Get cart-related functions and dark mode state from context
   const { addToCart, isInCart } = useContext(CartContext);
   const { darkMode } = useDarkMode();
-  const [category, setCategory] = useState("all");
-  const [maxPrice, setMaxPrice] = useState(50000);
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [customNames, setCustomNames] = useState(["Men's Classic Tshirt","Women's Polyster Shirt","Metal Bracelet"]);
 
-  // Load custom product names from JSON file
+  // State hooks for managing data and UI
+  const [category, setCategory] = useState("all"); 
+  const [maxPrice, setMaxPrice] = useState(50000); 
+  const [products, setProducts] = useState([]); 
+  const [categories, setCategories] = useState([]); 
+  const [filteredProducts, setFilteredProducts] = useState([]); 
+  const [loading, setLoading] = useState(true); 
+  const [error, setError] = useState(null); 
+  const [customNames, setCustomNames] = useState(["Men's Classic Tshirt","Women's Polyster Shirt","Metal Bracelet"]); // Custom product names
+
+  // Load custom product names from a JSON file on initial render
   useEffect(() => {
     const fetchProductNames = async () => {
       try {
@@ -30,12 +33,14 @@ const FeaturedProducts = () => {
     fetchProductNames();
   }, []);
 
-  // Fetch products from backend API
+  // Fetch products from the backend API
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const { data } = await axios.get("http://localhost:5000/api/products");
+
+      // Pick specific products and assign custom names
       const specificIndexes = [0, 2, 4];
       const selectedProducts = specificIndexes.map((index, i) => {
         const product = data[index];
@@ -46,6 +51,7 @@ const FeaturedProducts = () => {
       setProducts(data);
       setFilteredProducts(selectedProducts);
 
+      // Extract unique categories for the filter dropdown
       const uniqueCategories = ["all", ...new Set(data.map((product) => product.category.toLowerCase()))];
       setCategories(uniqueCategories);
     } catch (err) {
@@ -54,12 +60,14 @@ const FeaturedProducts = () => {
     } finally {
       setLoading(false);
     }
-  }, [customNames]);
+  }, [customNames]); // Depend on customNames to ensure correct product naming
 
+  // Fetch products on component mount or when customNames changes
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
 
+  // Filter products based on category and price
   useEffect(() => {
     const filtered = products
       .filter(
@@ -68,25 +76,30 @@ const FeaturedProducts = () => {
           product.price <= maxPrice
       );
 
+    // Select specific filtered products and apply custom names
     const specificIndexes = [1, 18, 4];
     const selectedFiltered = specificIndexes.map((index, i) => {
       const product = filtered[index];
       if (product) product.name = customNames[i] || `Product ${index + 1}`;
       return product;
     }).filter(Boolean);
+
     setFilteredProducts(selectedFiltered);
   }, [category, maxPrice, products, customNames]);
 
+  // Add product to cart handler
   const handleAddToCart = (product) => {
     addToCart(product);
     console.log(`✅ Added ${product.name} to cart!`);
   };
 
+  // View product details handler (console log for now)
   const handleViewDetails = (product) => {
-    console.log(`👀 Viewing details for ${product.name}`);
+    console.log(`Viewing details for ${product.name}`);
   };
 
   return (
+    // Main section wrapper with dynamic dark/light mode styles
     <section id="fproducts" className={`text-center py-5 ${darkMode ? "bg-dark text-light" : "bg-light"}`}>
       <h3 className="fw-bold mb-4 text-success">Featured Products</h3>
 
@@ -94,6 +107,7 @@ const FeaturedProducts = () => {
       <section id="filters" className="text-center py-4">
         <h3>Filter Products</h3>
         <div className="row justify-content-center">
+          {/* Category dropdown filter */}
           <div className="col-md-4">
             <label htmlFor="categoryFilter" className="form-label">Category</label>
             <select
@@ -107,6 +121,8 @@ const FeaturedProducts = () => {
               ))}
             </select>
           </div>
+
+          {/* Price range slider filter */}
           <div className="col-md-4">
             <label htmlFor="priceFilter" className="form-label">Max Price (Rs)</label>
             <input
@@ -124,9 +140,11 @@ const FeaturedProducts = () => {
         </div>
       </section>
 
+      {/* Loading and error messages */}
       {loading && <h5 className="text-info">Loading products...</h5>}
       {error && <h5 className="text-danger">{error}</h5>}
 
+      {/* Render filtered products or show a 'no products' message */}
       <div className="row justify-content-center gap-3">
         {!loading && !error && filteredProducts.length > 0 ? (
           filteredProducts.map((product) => (
@@ -142,7 +160,7 @@ const FeaturedProducts = () => {
             </React.Fragment>
           ))
         ) : (
-          !loading && !error && <h5 className="text-danger">No products match your filters!</h5>
+          <h5 className="text-danger">No products match your filters!</h5>
         )}
       </div>
     </section>
@@ -150,6 +168,3 @@ const FeaturedProducts = () => {
 };
 
 export default FeaturedProducts;
-
-
-

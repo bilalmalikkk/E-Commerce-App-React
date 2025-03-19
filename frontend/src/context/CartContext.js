@@ -3,6 +3,7 @@ import axios from "axios";
 
 export const CartContext = createContext();
 
+//wraps the component tree ({children}) to allow any component inside to access the context.
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -15,8 +16,8 @@ export const CartProvider = ({ children }) => {
         const validatedCart = data
           .map((item) => ({
             ...item,
-            price: item.price ?? 0,
-            quantity: item.quantity ?? 1,
+            price: item.price ?? 0, //if price is null assign it to zero
+            quantity: item.quantity ?? 1, 
           }))
           .filter((item) => item.quantity > 0 && item.price > 0); // Filter invalid items
         setCart(validatedCart);
@@ -26,7 +27,7 @@ export const CartProvider = ({ children }) => {
       }
     };
     fetchCart();
-  }, []);
+  }, []); // initializing empty array to ensure effect runs only once
 
   // Sync cart with backend and update total price
   useEffect(() => {
