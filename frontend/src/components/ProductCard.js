@@ -7,7 +7,7 @@ const ProductCard = ({ product, onAddToCart, isInCart }) => {
   return (
     <div
       className={`card shadow-sm ${darkMode ? "bg-secondary text-light" : "bg-white"}`} 
-      style={{ width: "18rem", display: "flex", flexDirection: "column", justifyContent: "space-between" }} // Ensure card layout is consistent
+      style={{ width: "18rem", display: "flex", flexDirection: "column", justifyContent: "space-between" }} 
       data-price={product.price} // Store product price as a data attribute for potential filtering
       data-category={product.category} // Store product category as a data attribute
     >
